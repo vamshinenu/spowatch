@@ -8,7 +8,6 @@ import watch
 import asyncio
 from winrt.windows.media.control import \
     GlobalSystemMediaTransportControlsSessionManager as MediaManager
-import spowatch2 as sw2
 
 
 async def get_media_info():
@@ -82,9 +81,9 @@ def startApp(init):
     getPid()
     time.sleep(1)
     if init:
-        asyncio.run(sw2.play())
+        asyncio.run(play())
     else:
-        asyncio.run(sw2.next())
+        asyncio.run(next())
 
 
 def winEnumHandler(hwnd, _):
@@ -97,7 +96,7 @@ def winEnumHandler(hwnd, _):
         if wintext != None and wintext != "" and wintext != " ":
             if wintext == "Spotify Free" or wintext == "Advertisement":
 
-                current_media_info = asyncio.run(sw2.get_media_info())
+                current_media_info = asyncio.run(get_media_info())
 
                 if((current_media_info["title"] == "Spotify Free") or (current_media_info["title"] == "Advertisement")):
                     print("Ad dectected...")
