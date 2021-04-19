@@ -10,7 +10,9 @@ to run spowatch
 ## Limitations
 Nothing for now, if you guys find anything feel free to comment.
 
-pause doesnot work. you need to close spotify for that. : (
+>FIXED
+
+pause doesnot work. you need to close spotify for that. : ( 
 
 
 ---
