@@ -5,10 +5,10 @@
 run package_installer.bat
 
 to run spowatch
-```python spowatch.py```
+```python spowatch v1.1.py```
 
 ## Limitations
-when song is paused it thinks it as an ad and restarts spotify and plays the song.
+Nothing for now, if you guys find anything feel free to comment.
 
 pause doesnot work. you need to close spotify for that. : (
 
