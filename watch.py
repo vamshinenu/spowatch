@@ -28,6 +28,8 @@ def end_watch():
         os.remove("pid.txt")
     if os.path.exists("songwatch.txt"):
         os.remove("songwatch.txt")
+    if os.path.exists("pausewatch.txt"):
+        os.remove("pausewatch.txt")
 
 
 def pid_watch(data, mode):
@@ -63,3 +65,12 @@ def song_watch(current_song):
         return True
     else:
         False
+
+
+def pause_watch(val):
+    if not os.path.exists("pausewatch.txt"):
+        file = open("pausewatch.txt", "w")
+        file.close()
+    with open("pausewatch.txt", "w") as file:
+        file.write(val)
+        file.close()
