@@ -17,4 +17,6 @@ pause doesnot work. you need to close spotify for that. : (
 
 ---
 ## License & Copyright
-© Vamshi Krishna,
+© vanhsirki
+ 
+ I donot encourage to use this. This is just for educational purposes only.
