@@ -21,9 +21,9 @@ cd \python%python_ver%\Scripts\
 pip install psutil
 cd \
 
-cd \python%python_ver%\Scripts\
-pip install pynput
-cd \
+@REM cd \python%python_ver%\Scripts\
+@REM pip install pynput
+@REM cd \
 
 cd \python%python_ver%\Scripts\
 pip install asyncio
