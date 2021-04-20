@@ -1,42 +1,154 @@
+
+# * spowatch v1.2
+# * updates
+'''
+-> no need of any watch files.
+-> watch files when deleted cause an error.
+-> added comments to the file for good understanding.
+'''
+import getpass
 import win32gui
 import win32process
 import psutil
 import os
 import time
-import watch
-from pynput.keyboard import Key, Controller, Listener
-import getpass
+import asyncio
+from winrt.windows.media.control import \
+    GlobalSystemMediaTransportControlsSessionManager as MediaManager
+from colorama import Fore
 
-paused = False
+skiped_ads = 0
+spotify_pids = []
+previous_song = ""
 user = getpass.getuser()
-spotify_path = "C:/Users/"+user+"/AppData/Roaming/Spotify/Spotify.exe"
+
+# * Spotify can be a windows app downloaded from [Microsoft Store]. or direct .exe download
+# * from Spotify website. which have different install locations.
+
+reg_spotify_path = "C:/Users/"+user+"/AppData/Roaming/Spotify/Spotify.exe"
 winapp_spotify_path = "C:/Users/"+user + \
     "/AppData/Local/Microsoft/WindowsApps/SpotifyAB.SpotifyMusic_zpdnekdrzrea0/Spotify.exe"
-correct_spotify_path = ""
+spotify_install_path = ""
+# * This gets the media that is playing in this case we are interseted in Spotify
+# * so we set the target to Spotify
 
 
-def on_press(key):
-    global paused
-    w = win32gui
-    forwin = w.GetWindowText(w.GetForegroundWindow())
-    if forwin == "Spotify Free":
-        if key == Key.space:
-            paused = not paused
+async def get_media_info():
+    found = True
+    while found:
+        try:
+            sessions = await MediaManager.request_async()
+            TARGET_ID = "Spotify.exe"
+            current_session = sessions.get_current_session()
+            if current_session:
+                if current_session.source_app_user_model_id == TARGET_ID:
+                    info = await current_session.try_get_media_properties_async()
+
+                    info_dict = {song_attr: info.__getattribute__(
+                        song_attr) for song_attr in dir(info) if song_attr[0] != '_'}
+
+                    info_dict['genres'] = list(info_dict['genres'])
+
+                    found = False
+                    return info_dict
+
+#! some computers might be slow to open Spotify so the get_media_info will not
+#! find Spotify and throws an exception.
+        except Exception:
+            print("make sure Spotify is open")
+            found = True
+
+# * This pauses the song [not required/not used]
 
 
-def on_release(_):
-    pass
+async def pause():
+    sessions = await MediaManager.request_async()
+    current_session = sessions.get_current_session()
+    await current_session.try_pause_async()
+
+# * This plays the song used at the app start.
 
 
-def keyListener():
-    with Listener(on_press=on_press, on_release=on_release) as listener:
-        listener.join()
+async def play():
+    sessions = await MediaManager.request_async()
+    current_session = sessions.get_current_session()
+    await current_session.try_play_async()
+
+# * This plays the song next song. when the Spotify restarts it points the last
+# * played track.
 
 
-def killThread():
-    print("terminating spotify...")
+async def next():
+    sessions = await MediaManager.request_async()
+    current_session = sessions.get_current_session()
+    await current_session.try_skip_next_async()
+
+# * this gets the current user which helps to start Spotify according to the username
+
+
+def get_spotify_pid():
+    global spotify_pids
     process_name = "Spotify"
-    # pid = None
+    pid = []
+    for proc in psutil.process_iter():
+        if process_name in proc.name():
+            pid.append(proc.pid)
+    spotify_pids = pid
+
+# * starts Spotify with init variable which is True if Spotify is started for the first time.
+# * else it is set to False.
+
+
+def start_spotify(init, path):
+    os.startfile(path)
+    time.sleep(2)
+    get_spotify_pid()
+    try:
+        if init:
+            asyncio.run(play())
+        else:
+            asyncio.run(next())
+    except AttributeError:
+        pass
+
+# * This checks if Spotify is running or not which
+
+
+def spotify_running():
+    process_name = "Spotify"
+    pid = []
+    for proc in psutil.process_iter():
+        if process_name in proc.name():
+            pid.append(proc.pid)
+    if pid == []:
+        return False
+    else:
+        return True
+
+
+def song_name(wintext, pid):
+    global spotify_pids
+    global previous_song
+
+    if pid in spotify_pids:
+        if "Spotify" not in wintext:
+            current_song = wintext.rstrip().lstrip()
+            # * when dragging the songs this prints drag so drag doesnot count
+            if previous_song != current_song and current_song != "Drag":
+                print("[info]: playing ->", end=" ")
+                print(current_song)
+                previous_song = current_song
+    # else:
+    #     print("not found")
+    #     print(str(spotify_pids) + " ----- " + str(pid))
+
+
+# * This kills the Spotify thread.
+
+
+def kill_spotify():
+    print("[info]: terminating Spotify...")
+    process_name = "Spotify"
     for proc in psutil.process_iter():
         if process_name in proc.name():
             try:
@@ -45,110 +157,88 @@ def killThread():
                 pass
 
 
-def getPid():
-    process_name = "Spotify"
-    pid = []
-    for proc in psutil.process_iter():
-        if process_name in proc.name():
-            pid.append(proc.pid)
-    watch.pid_watch(pid, "w")
-
-
-def play(init):
-    keyboard = Controller()
-    if init:
-        keyboard.press(Key.space)
-    else:
-        keyboard.press(Key.ctrl)
-        keyboard.press(Key.right)
-        keyboard.release(Key.right)
-        keyboard.release(Key.ctrl)
-
-
-def startApp(init):
-    print("starting spotify...")
-    # path = "C:/Users/va/AppData/Roaming/Spotify/Spotify.exe"
-    os.startfile(correct_spotify_path)
-    watch.write_watch()
-    getPid()
-    play(init)
-
-
-# def block_spowatch():
-#     w = win32gui
-#     forwin = w.GetWindowText(w.GetForegroundWindow())
-#     file = open("pausewatch.txt", "r")
-#     p = file.read()
-#     if p != 0:
-#         if forwin == "Spotify Free" and paused:
-#             file.close()
-#             watch.pause_watch(1)
-#             return False
-
-
 def winEnumHandler(hwnd, _):
-    global paused
+    global skiped_ads
+    global spotify_install_path
     if win32gui.IsWindowVisible(hwnd):
         wintext = win32gui.GetWindowText(hwnd)
         _, pid = win32process.GetWindowThreadProcessId(hwnd)
 
-        li = watch.pid_watch("none", "r")
-        if not paused:
-            if wintext != None and wintext != "" and wintext != " ":
-                if wintext == "Spotify Free" or wintext == "Advertisement":
-                    if watch.read_watch() < 1:
-                        print("Ad dectected...")
-                        killThread()
-                        time.sleep(0.5)
-                        startApp(False)
-                    watch.write_watch()
+        if wintext != None and wintext != "" and wintext != " ":
+            if wintext == "Spotify Free" or wintext == "Advertisement":
 
-                elif str(pid) in li:
-                    if "Spotify" in wintext:
-                        pass
-                    else:
-                        watch.init_watch()
-                        h = wintext.rstrip().lstrip()
-                        if watch.song_watch(h):
-                            print("playing: ", end=" ")
-                            print(h)
-        else:
-            print("song paused,spowatch is blocked")
+                current_media_info = asyncio.run(get_media_info())
+
+                if((current_media_info["title"] == "Spotify Free") or (current_media_info["title"] == "Advertisement")):
+                    print(Fore.RED + "[info]: Ad dectected")
+                    print(Fore.RESET, end="")
+                    skiped_ads = skiped_ads + 1
+                    kill_spotify()
+                    # time.sleep(0.5)
+                    print("[info]: starting Spotify")
+                    start_spotify(False, spotify_install_path)
+            song_name(wintext, pid)
 
 
 def main():
-    global correct_spotify_path
-    try:
-        os.startfile(spotify_path)
-    except FileNotFoundError:
+    global spotify_install_path
+    global reg_spotify_path
+    global winapp_spotify_path
+    global skiped_ads
+    print(Fore.GREEN + '''
+spowatch v1.2
+License & Copyright © vanhsirki''')
+    print(Fore.RESET, end="")
+    print("[info]: trying to start Spotify...")
+
+    if not spotify_running():
         try:
-            os.startfile(winapp_spotify_path)
+            start_spotify(True, reg_spotify_path)
         except FileNotFoundError:
-            print("spotify not installed!")
+            try:
+                start_spotify(True, winapp_spotify_path)
+            except FileNotFoundError:
+                print(
+                    Fore.RED + "[error]: Spotify not found in default locations.")
+                print(Fore.RESET, end="")
+            else:
+                spotify_install_path = winapp_spotify_path
         else:
-            correct_spotify_path = winapp_spotify_path
-            pass
-        pass
+            spotify_install_path = reg_spotify_path
     else:
-        correct_spotify_path = spotify_path
-        pass
-    import threading
-    threading.Thread(target=keyListener)
-    watch.init_watch()
-    startApp(True)
+        print("[info]: Spotify already runnig...")
+        if os.path.exists(reg_spotify_path):
+            spotify_install_path = reg_spotify_path
+        else:
+            spotify_install_path = winapp_spotify_path
+        get_spotify_pid()
     try:
-        print("running spotify watcher...")
+        print("[info]: running spowatch...")
         while True:
             win32gui.EnumWindows(winEnumHandler, None)
             time.sleep(0.5)
+
     except KeyboardInterrupt:
-        print("\n\nkeyboard interrupt, ending watch...\n")
-        watch.end_watch()
-        killThread()
+        print("[info]: keyboard interrupt, ending watch")
+        if("y" == input("close Spotify? (y/n): ")):
+            kill_spotify()
+        print(Fore.GREEN + "[info]: ads skipped: "+str(skiped_ads))
+        print(Fore.RESET, end="")
+        try:
+            input("press Enter key to exit...")
+        except [KeyboardInterrupt, EOFError]:
+            pass
+
     except psutil.NoSuchProcess:
-        print("process no longer exist, ending watch...")
-        killThread()
-        watch.end_watch()
+        print("[info]: process no longer exist, ending watch")
+        if("y" == input("close Spotify? (y/n): ")):
+            kill_spotify()
+        print(Fore.GREEN + "[info]: ads skipped: "+str(skiped_ads))
+        print(Fore.RESET, end="")
+        try:
+            input("press Enter key to exit...")
+        except [KeyboardInterrupt, EOFError]:
+            pass
 
 
 if __name__ == "__main__":
