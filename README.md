@@ -1,17 +1,48 @@
-# spowatch
- a python script which detects ads in spotify v1.2
+# Spowatch 🎶
+ A python script which detects ads in spotify v1.2
+
+> We do not encourage to use this | This is just for educational purposes only
+>
+> Try upgrade to spotify premium if you can
 
 
-run package_installer.bat
 
-to run spowatch
-```python spowatch v1.3.py```
+## Installation 👩‍🏫
 
-## Limitations
-Nothing for now, if you guys find anything feel free to comment.
+We assume you have `python3` & `pip` installed
+
+if you are ready we can begin 😉
+
+> open your command propmt ot terminal
+>
+> and type the following
+
+1. Download the project
+
+```
+git clone https://github.com/vanhsirki/spowatch.git
+```
+
+2. Change directory
+```
+cd spowatch/
+```
+3. Install packages
+```
+pip install -r requirements.txt
+```
+4. Run the script
+```
+python3 spowatch v1.3.py
+```
+<br />
+
+## Limitations 🤧
+Nothing for now, if you guys find anything feel free to open and issue.
+<a href="https://github.com/vanhsirki/spowatch/issues">create an issue</a>
 
 ---
-## License & Copyright
+## License & Copyright ⚖
 © vanhsirki
- 
- I donot encourage to use this. This is just for educational purposes only.
+
+<a href="./LICENSE">MIT LICENSE</a>
