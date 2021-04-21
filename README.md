@@ -1,9 +1,9 @@
 # Spowatch 🎶
  A python script which detects ads in spotify v1.2
 
-> We do not encourage to use this | This is just for educational purposes only
+> We do not encourage to use this project | This is made only for educational purposes
 >
-> Try upgrade to spotify premium if you can
+> Try to upgrade spotify to premium if you can
 
 
 
