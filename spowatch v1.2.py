@@ -21,6 +21,7 @@ skiped_ads = 0
 spotify_pids = []
 previous_song = ""
 user = getpass.getuser()
+focused_win = 0
 
 # * Spotify can be a windows app downloaded from [Microsoft Store]. or direct .exe download
 # * from Spotify website. which have different install locations.
