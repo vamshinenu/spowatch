@@ -235,6 +235,7 @@ def winEnumHandler(hwnd, _):
 
         if wintext != None and wintext != "" and wintext != " ":
             if wintext == "Spotify Free" or wintext == "Advertisement":
+                # if wintext == "Spotify Free" or wintext == "Advertisement":
                 current_media_info = asyncio.run(get_media_info())
                 if((current_media_info["title"] == "Spotify Free") or (current_media_info["title"] == "Advertisement")):
                     print(Fore.RED + "[info]: Ad dectected")
