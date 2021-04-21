@@ -5,7 +5,7 @@
 run package_installer.bat
 
 to run spowatch
-```python spowatch.py```
+```python spowatch v1.3.py```
 
 ## Limitations
 Nothing for now, if you guys find anything feel free to comment.
