@@ -13,7 +13,7 @@ We assume you have `python3` & `pip` installed
 
 if you are ready we can begin 😉
 
-> open your command propmt ot terminal
+> open your command propmt or terminal
 >
 > and type the following
 
