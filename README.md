@@ -31,9 +31,7 @@ cd spowatch/
 ```
 pip install -r requirements.txt
 ```
-```
 or just run package_installer.bat file
-```
 4. Run the script
 ```
 python3 spowatch.py
