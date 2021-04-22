@@ -1,5 +1,5 @@
 # Spowatch 🎶
- A python script which detects ads in spotify v1.2
+ A python script which detects ads in spotify
 
 > We do not encourage to use this project | This is made only for educational purposes
 >
@@ -33,7 +33,7 @@ pip install -r requirements.txt
 ```
 4. Run the script
 ```
-python3 spowatch v1.3.py
+python3 spowatch.py
 ```
 <br />
 
