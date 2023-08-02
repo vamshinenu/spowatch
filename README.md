@@ -45,6 +45,6 @@ Nothing for now, if you guys find anything feel free to open and issue.
 
 ---
 ## License & Copyright ⚖
-© vanhsirki
+© vamshi nenu
 
 <a href="./LICENSE">MIT LICENSE</a>
