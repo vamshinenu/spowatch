@@ -3,7 +3,7 @@
 
 > We do not encourage to use this project | This is made only for educational purposes
 >
-> Try to upgrade spotify to premium if you can
+> please upgrade spotify to premium.
 
 
 
